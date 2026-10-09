@@ -2,7 +2,6 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -67,15 +66,26 @@ impl<T> myStack<T> {
         }
     }
     pub fn push(&mut self, elem: T) {
-        //TODO
+        // 新元素始终入 q1
+        self.q1.enqueue(elem);
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+        if self.q1.is_empty() {
+            return Err("Stack is empty");
+        }
+        // 把 q1 中前 n-1 个元素依次移到 q2，剩下的最后一个就是栈顶
+        while self.q1.size() > 1 {
+            if let Ok(value) = self.q1.dequeue() {
+                self.q2.enqueue(value);
+            }
+        }
+        let result = self.q1.dequeue().map_err(|_| "Stack is empty");
+        // 交换 q1 和 q2，保证下一个待弹出的元素仍在 q1 队尾
+        std::mem::swap(&mut self.q1, &mut self.q2);
+        result
     }
     pub fn is_empty(&self) -> bool {
-		//TODO
-        true
+        self.q1.is_empty() && self.q2.is_empty()
     }
 }
 
